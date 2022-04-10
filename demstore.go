@@ -20,14 +20,79 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-
-	"github.com/tonylepage/demchain"
+	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
 // DEMstore Chaincode implementation
 type DEMstore struct {
 	contractapi.Contract
 }
+
+// Asset describes basic details of what makes up a simple asset
+type Measurement struct {
+	Location		string `json:"location"`
+	Measuredepoch		string `json:"measuredepoch"`
+	Rtt				string `json:"rtt"`
+	CDN				string `json:"cdn"`
+	Provider		string `json:"provider"`
+}
+
+// InitLedger add a base set of performance data 
+func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error {
+	measurements := []Measurement{
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Stackpath", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Fastly", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Akamai", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Cloudflare", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "CloudFront", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "GMA", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Aliyun", provider: "Tony-test"},
+		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "CDNetworks", provider: "Tony-test"},
+	}
+
+	for _, measurement := range measurements {
+		measurementJSON, err := json.Marshal(asset)
+		if err != nil {
+			return err
+		}
+
+		err = ctx.GetStub().PutState(asset.ID, assetJSON)
+		if err != nil { 
+			return fmt.Errorf("failed to put to world state. %v", err)
+		}
+	}
+
+	return nil
+}
+
+
+// CreateMeasurement issues a new measurement to the world state with given details.
+func (s *DEMstore) CreateMeasurement(ctx contractapi.TransactionContextInterface, location string, measuredepoch string, rtt string, cdn string, provider string) error {
+	exists, err := s.MeasurementExists(ctx, location, cdn)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return fmt.Errorf("the measurement at %s for %s already exists", location, cdn)
+	}
+
+	measurement := Measurement{
+		Location: location,
+		Measuredepoch: measuredepoch,
+		Rtt: rtt,
+		CDN: cdn,
+		Provider: provider,
+	}
+	measurementJSON, err := json.Marshal(measurement)
+	if err != nil {
+		return err
+	}
+
+	return ctx.GetStub().PutState(location)
+}
+
+
+
 
 func (t *DEMstore) Init(ctx contractapi.TransactionContextInterface, A string, Aval int, B string, Bval int) error {
 	fmt.Println("DEMstore Init")
