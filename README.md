@@ -64,8 +64,8 @@ docker exec cli peer channel join -b demchannel.block \
 
 Install the dependencies:
 ```
-sudo chown -R ec2-user:ec2-user fabric-samples/
-cd fabric-samples/chaincode/abstore/go/
+sudo chown -R ec2-user:ec2-user demchain/
+cd demchain/
 GO111MODULE=on go mod vendor
 cd -
 ```
