@@ -40,14 +40,14 @@ type Measurement struct {
 // InitLedger add a base set of performance data 
 func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	measurements := []Measurement{
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Stackpath", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Fastly", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Akamai", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Cloudflare", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "CloudFront", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "GMA", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Aliyun", Provider: "Tony-test"},
-		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "CDNetworks", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "Stackpath", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "Fastly", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "Akamai", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "Cloudflare", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "CloudFront", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "GMA", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "Aliyun", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", CDN: "CDNetworks", Provider: "Tony-test"},
 	}
 
 	for _, measurement := range measurements {
@@ -91,103 +91,6 @@ func (s *DEMstore) CreateMeasurement(ctx contractapi.TransactionContextInterface
 	return ctx.GetStub().PutState(location)
 }
 
-
-
-
-func (t *DEMstore) Init(ctx contractapi.TransactionContextInterface, A string, Aval int, B string, Bval int) error {
-	fmt.Println("DEMstore Init")
-	var err error
-	// Initialize the chaincode
-	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
-	// Write the state to the ledger
-	err = ctx.GetStub().PutState(A, []byte(strconv.Itoa(Aval)))
-	if err != nil {
-		return err
-	}
-
-	err = ctx.GetStub().PutState(B, []byte(strconv.Itoa(Bval)))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Transaction makes payment of X units from A to B
-func (t *ABstore) Invoke(ctx contractapi.TransactionContextInterface, A, B string, X int) error {
-	var err error
-	var Aval int
-	var Bval int
-	// Get the state from the ledger
-	// TODO: will be nice to have a GetAllState call to ledger
-	Avalbytes, err := ctx.GetStub().GetState(A)
-	if err != nil {
-		return fmt.Errorf("Failed to get state")
-	}
-	if Avalbytes == nil {
-		return fmt.Errorf("Entity not found")
-	}
-	Aval, _ = strconv.Atoi(string(Avalbytes))
-
-	Bvalbytes, err := ctx.GetStub().GetState(B)
-	if err != nil {
-		return fmt.Errorf("Failed to get state")
-	}
-	if Bvalbytes == nil {
-		return fmt.Errorf("Entity not found")
-	}
-	Bval, _ = strconv.Atoi(string(Bvalbytes))
-
-	// Perform the execution
-	Aval = Aval - X
-	Bval = Bval + X
-	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
-
-	// Write the state back to the ledger
-	err = ctx.GetStub().PutState(A, []byte(strconv.Itoa(Aval)))
-	if err != nil {
-		return err
-	}
-
-	err = ctx.GetStub().PutState(B, []byte(strconv.Itoa(Bval)))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Delete  an entity from state
-func (t *DEMstore) Delete(ctx contractapi.TransactionContextInterface, A string) error {
-
-	// Delete the key from the state in ledger
-	err := ctx.GetStub().DelState(A)
-	if err != nil {
-		return fmt.Errorf("Failed to delete state")
-	}
-
-	return nil
-}
-
-// Query callback representing the query of a chaincode
-func (t *DEMstore) Query(ctx contractapi.TransactionContextInterface, A string) (string, error) {
-	var err error
-	// Get the state from the ledger
-	Avalbytes, err := ctx.GetStub().GetState(A)
-	if err != nil {
-		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
-		return "", errors.New(jsonResp)
-	}
-
-	if Avalbytes == nil {
-		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
-		return "", errors.New(jsonResp)
-	}
-
-	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
-	return string(Avalbytes), nil
-}
 
 func main() {
 	cc, err := contractapi.NewChaincode(new(DEMstore))
