@@ -31,7 +31,7 @@ type DEMstore struct {
 // Asset describes basic details of what makes up a simple asset
 type Measurement struct {
 	Location		string `json:"location"`
-	Measuredepoch		string `json:"measuredepoch"`
+	Measuredepoch	string `json:"measuredepoch"`
 	Rtt				string `json:"rtt"`
 	CDN				string `json:"cdn"`
 	Provider		string `json:"provider"`
@@ -40,14 +40,14 @@ type Measurement struct {
 // InitLedger add a base set of performance data 
 func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	measurements := []Measurement{
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Stackpath", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Fastly", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Akamai", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Cloudflare", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "CloudFront", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "GMA", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "Aliyun", provider: "Tony-test"},
-		{location: "Taipei, Taiwan", measuredepoch: "1649410093", rtt: "3000", cdn: "CDNetworks", provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Stackpath", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Fastly", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Akamai", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Cloudflare", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "CloudFront", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "GMA", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "Aliyun", Provider: "Tony-test"},
+		{Location: "Taipei, Taiwan", Measuredepoch: "1649410093", Rtt: "3000", Cdn: "CDNetworks", Provider: "Tony-test"},
 	}
 
 	for _, measurement := range measurements {
