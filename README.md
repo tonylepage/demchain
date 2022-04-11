@@ -12,7 +12,7 @@ The Client must have access to a node. You will need you MemberID and NodeEndpoi
 
 Create a Docker Compose configuration file named docker-compose-cli.yaml in the /home/ec2-user directory, which you use to run the Hyperledger Fabric CLI. You use this CLI to interact with peer nodes that your member owns. 
 
-```JSON
+```yaml
 version: '2'
 services:
   cli:
