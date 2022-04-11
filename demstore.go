@@ -97,7 +97,7 @@ func (s *DEMstore) CreateMeasurement(ctx contractapi.TransactionContextInterface
 		return err
 	}
 
-	return ctx.GetStub().PutState(location)
+	return ctx.GetStub().PutState(measurementID, measurementJSON)
 }
 
 // ReadMeasurement returns the asset stored in the world state with given id.
@@ -193,7 +193,7 @@ func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, locati
 	hash.Write([]byte(rawID))
 	rhash := hash.Sum(nil)
 
-	return rhash, nil
+	return string(rhash), nil
 }
 
 func main() {
