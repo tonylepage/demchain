@@ -18,10 +18,8 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"crypto/sha1"
 	"fmt"
-	"strconv"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -59,7 +57,7 @@ func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error
 			return err
 		}
 
-		measurementID := s.GetHashID(measurement.location, measurement.cdn)
+		measurementID := s.GetHashID(ctx, measurement.Location, measurement.CDN)
 
 		err = ctx.GetStub().PutState(measurementID, measurementJSON)
 		if err != nil { 
@@ -99,7 +97,7 @@ func (s *DEMstore) CreateMeasurement(ctx contractapi.TransactionContextInterface
 }
 
 // ReadMeasurement returns the asset stored in the world state with given id.
-func (s *SmartContract) ReadMeasurement(ctx contractapi.TransactionContextInterface, id string) (*Measurement, error) {
+func (s *DEMstore) ReadMeasurement(ctx contractapi.TransactionContextInterface, id string) (*Measurement, error) {
     measurementJSON, err := ctx.GetStub().GetState(id)
     if err != nil {
       return nil, fmt.Errorf("failed to read from world state: %v", err)
@@ -118,7 +116,7 @@ func (s *SmartContract) ReadMeasurement(ctx contractapi.TransactionContextInterf
 }
 
 // GetAllMeasurements returns all measurements found in world state
-func (s *SmartContract) GetAllMeasurements(ctx contractapi.TransactionContextInterface) ([]*Measurement, error) {
+func (s *DEMstore) GetAllMeasurements(ctx contractapi.TransactionContextInterface) ([]*Measurement, error) {
 	// range query with empty string for startKey and endKey does an
 	// open-ended query of all measurements in the chaincode namespace.
 	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -146,7 +144,7 @@ func (s *SmartContract) GetAllMeasurements(ctx contractapi.TransactionContextInt
 }
 
 // UpdateMeasurement updates an existing measurement in the world state with provided parameters.
-func (s *SmartContract) UpdateMeasurement(ctx contractapi.TransactionContextInterface, location string, measuredepoch string, rtt string, cdn string, provider string) error {
+func (s *DEMstore) UpdateMeasurement(ctx contractapi.TransactionContextInterface, location string, measuredepoch string, rtt string, cdn string, provider string) error {
 	measurementID := s.GetHashID(location, cdn)
 	exists, err := s.MeasurementExists(ctx, measurementID)
 	if err != nil {
@@ -174,7 +172,7 @@ func (s *SmartContract) UpdateMeasurement(ctx contractapi.TransactionContextInte
 }
 
 // AssetExists returns true when asset with given ID exists in world state
-func (s *SmartContract) MeasurementExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
+func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
 	measurementJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
 	  return false, fmt.Errorf("failed to read from world state: %v", err)
@@ -184,7 +182,7 @@ func (s *SmartContract) MeasurementExists(ctx contractapi.TransactionContextInte
 }
 
 // GetHashID returns the hash of city and cdn to be used as a key
-func (s *SmartContract) GetHashID(ctx contractapi.TransactionContextInterface, location string, cdn string) (string, error) {
+func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, location string, cdn string) (string, error) {
 
 	rawID := location + cdn
 	hash := sha1.New()
