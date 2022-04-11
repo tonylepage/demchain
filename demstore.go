@@ -56,7 +56,7 @@ func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error
 		if err != nil {
 			return err
 		}
-		measurement.ID := measurementID
+		//measurement.ID := measurementID
 
 		measurementJSON, err := json.Marshal(measurement)
 		if err != nil {
