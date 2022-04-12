@@ -18,7 +18,8 @@ package main
 
 import (
 	"encoding/json"
-	"crypto/sha1"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -186,14 +187,14 @@ func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface
 }
 
 // GetHashID returns the hash of city and cdn to be used as a key
-func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, location string, cdn string) (string, error) {
+func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, location string, cdn string) string {
 
 	rawID := location + cdn
-	hash := sha1.New()
+	hash := md5.New()
 	hash.Write([]byte(rawID))
 	rhash := hash.Sum(nil)
 
-	return string(rhash), nil
+	return hex.EncodeToString(rhash)
 }
 
 func main() {
