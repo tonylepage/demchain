@@ -116,3 +116,13 @@ Initialise the chaincode using this command:
 ```
 docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"InitLedger","Args":[""]}'
 ```
+
+To retrieve all the measurement values from the chaincode:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"GetAllMeasurements","Args":[""]}'
+```
+
+To add a new measurement:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"CreateMeasurement","Args":["Taipei, Taiwan", 1649602278, 217, "Stackpath", "console-tester"]}'
+```
