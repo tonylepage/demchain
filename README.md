@@ -124,5 +124,10 @@ docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain
 
 To add a new measurement:
 ```
-docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"CreateMeasurement","Args":["Taipei, Taiwan", 1649602278, 217, "Stackpath", "console-tester"]}'
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"CreateMeasurement","Args":["Taipei, Taiwan", "1649602278", "217", "Stackpath", "console-tester"]}'
+```
+
+To update a measurement:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"UpdateMeasurement","Args":["Taipei, Taiwan", "1649602585", "217", "Stackpath", "console-tester"]}'
 ```
