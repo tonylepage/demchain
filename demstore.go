@@ -54,9 +54,6 @@ func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error
 
 	for _, measurement := range measurements {
 		measurementID := s.GetHashID(ctx, measurement.Location, measurement.CDN)
-		if err != nil {
-			return err
-		}
 		//measurement.ID := measurementID
 
 		measurementJSON, err := json.Marshal(measurement)
