@@ -69,3 +69,15 @@ cd demchain/
 GO111MODULE=on go mod vendor
 cd -
 ```
+
+To check which chaincode has been installed on the node:
+```
+$ docker exec cli peer lifecycle chaincode queryinstalled
+```
+
+In this example, 2 packages have been installed, so the command returns:
+```
+Installed chaincodes on peer:
+Package ID: abstore_1:3918d0438fd2ebe48ed1bde01533513a14f788846fd2d72ef054482760e73409, Label: abstore_1
+Package ID: demchain_1:e60917100fc9af5d6bca17592d78711b077af972861d382970107fef2d0e9cdc, Label: demchain_1
+```
