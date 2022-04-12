@@ -53,7 +53,7 @@ func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error
 	}
 
 	for _, measurement := range measurements {
-		measurementID, err := s.GetHashID(ctx, measurement.Location, measurement.CDN)
+		measurementID := s.GetHashID(ctx, measurement.Location, measurement.CDN)
 		if err != nil {
 			return err
 		}
@@ -76,7 +76,7 @@ func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error
 
 // CreateMeasurement issues a new measurement to the world state with given details.
 func (s *DEMstore) CreateMeasurement(ctx contractapi.TransactionContextInterface, location string, measuredepoch int, rtt int, cdn string, provider string) error {
-	measurementID, err := s.GetHashID(ctx, location, cdn)
+	measurementID := s.GetHashID(ctx, location, cdn)
 	exists, err := s.MeasurementExists(ctx, measurementID)
 	if err != nil {
 		return err
@@ -150,7 +150,7 @@ func (s *DEMstore) GetAllMeasurements(ctx contractapi.TransactionContextInterfac
 
 // UpdateMeasurement updates an existing measurement in the world state with provided parameters.
 func (s *DEMstore) UpdateMeasurement(ctx contractapi.TransactionContextInterface, location string, measuredepoch int, rtt int, cdn string, provider string) error {
-	measurementID, err := s.GetHashID(ctx, location, cdn)
+	measurementID := s.GetHashID(ctx, location, cdn)
 	exists, err := s.MeasurementExists(ctx, measurementID)
 	if err != nil {
 	  return err
