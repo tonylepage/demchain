@@ -185,7 +185,7 @@ func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface
 
 // QueryMeasurementsByLocation queries for measurement based on the location.
 func (t *DEMstore) QueryMeasurementsByLocation(ctx contractapi.TransactionContextInterface, location string) ([]*Measurement, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"measurement","location":"%s"}}`, owner)
+	queryString := fmt.Sprintf(`{"selector":{"docType":"measurement","location":"%s"}}`, location)
 	return getQueryResultForQueryString(ctx, queryString)
 }
 
@@ -208,6 +208,26 @@ func getQueryResultForQueryString(ctx contractapi.TransactionContextInterface, q
 	defer resultsIterator.Close()
 
 	return constructQueryResponseFromIterator(resultsIterator)
+}
+
+
+// constructQueryResponseFromIterator constructs a slice of assets from the resultsIterator
+func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]*Measurement, error) {
+	var measurements []*Measurement
+	for resultsIterator.HasNext() {
+		queryResult, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var measurement Measurement
+		err = json.Unmarshal(queryResult.Value, &measurement)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(measurements, &measurement)
+	}
+
+	return measurements, nil
 }
 
 
