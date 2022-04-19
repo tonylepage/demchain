@@ -1,7 +1,7 @@
 # DEM-Chain
 Digital Experience Monitoring on the Blockchain.
 
-# Instructions
+# Installation Instructions
 Check out this code on a client machine. 
 
 ```
@@ -80,4 +80,54 @@ In this example, 2 packages have been installed, so the command returns:
 Installed chaincodes on peer:
 Package ID: abstore_1:3918d0438fd2ebe48ed1bde01533513a14f788846fd2d72ef054482760e73409, Label: abstore_1
 Package ID: demchain_1:e60917100fc9af5d6bca17592d78711b077af972861d382970107fef2d0e9cdc, Label: demchain_1
+```
+
+Now that the chaincode is deployed on a node, it should be approved. First we need to check commit readiness:
+```
+export CC_PACKAGE_ID=demchain_1:084cd76392ebd046fafe36d75ba91467c0fc313bbccad83489b11d941ad42fe9
+docker exec cli peer lifecycle chaincode approveformyorg \
+--orderer $ORDERER --tls --cafile /opt/home/managedblockchain-tls-chain.pem \
+--channelID demchannel --name demcc --version v0 --sequence 1 --package-id $CC_PACKAGE_ID
+```
+
+And returns:
+```
+2022-04-12 02:28:31.169 UTC [chaincodeCmd] ClientWait -> INFO 001 txid [769799fac6bdf25e7d8e090276587e7a85cc72bbd1e12129256edc65277d97a9] committed with status (VALID) at nd-t22kaurwnvcbbdqntsxrtsqse4.m-ehbcgjxqgbakdjjyl3uewcdhzu.n-4yfjzomgsvadtlyb63niexxspe.managedblockchain.us-east-1.amazonaws.com:30003
+```
+
+Then we can commit the chaincode:
+```
+docker exec cli peer lifecycle chaincode commit \
+--orderer $ORDERER --tls --cafile /opt/home/managedblockchain-tls-chain.pem \
+--channelID demchannel --name demcc --version v0 --sequence 1
+```
+
+And finally, verify it:
+```
+docker exec cli peer lifecycle chaincode querycommitted \
+--channelID demchannel
+```
+
+# Running the Chaincode
+
+To execute methods on the chaincode, continue to use the cli.
+
+Initialise the chaincode using this command:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"InitLedger","Args":[""]}'
+```
+
+To retrieve all the measurement values from the chaincode:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"GetAllMeasurements","Args":[""]}'
+```
+
+To add a new measurement:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"CreateMeasurement","Args":["Taipei, Taiwan", "1649602278", "217", "Stackpath", "console-tester"]}'
+```
+
+To update a measurement:
+```
+docker exec cli peer chaincode invoke --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID demchannel --name demcc -c '{"Function":"UpdateMeasurement","Args":["Taipei, Taiwan", "1649602585", "217", "Stackpath", "console-tester"]}'
 ```
