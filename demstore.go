@@ -33,7 +33,7 @@ type DEMstore struct {
 
 // Asset describes basic details of what makes up a simple asset
 type Measurement struct {
-	ID				string 	`json:"ID"`
+	ID				string 	`json:"ID,string"`
 	Location		string 	`json:"location"`
 	Measuredepoch	int 	`json:"measuredepoch"`
 	Rtt				int 	`json:"rtt"`
