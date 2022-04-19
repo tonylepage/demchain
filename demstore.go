@@ -167,7 +167,7 @@ func (s *DEMstore) UpdateMeasurement(ctx contractapi.TransactionContextInterface
 		CDN: cdn,
 		Provider: provider,
 	}
-	fmt.Printf(measurement)
+	fmt.Println("Measurement update: ", measurement)
 	measurementJSON, err := json.Marshal(measurement)
 	if err != nil {
 	  return err
