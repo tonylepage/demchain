@@ -21,6 +21,8 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+
+	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -224,7 +226,7 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 		if err != nil {
 			return nil, err
 		}
-		assets = append(measurements, &measurement)
+		measurements = append(measurements, &measurement)
 	}
 
 	return measurements, nil
