@@ -183,6 +183,38 @@ func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface
 	return measurementJSON != nil, nil
 }
 
+// QueryAssetsByOwner queries for assets based on the owners name.
+// This is an example of a parameterized query where the query logic is baked into the chaincode,
+// and accepting a single query parameter (owner).
+// Only available on state databases that support rich query (e.g. CouchDB)
+// Example: Parameterized rich query
+func (t *SimpleChaincode) QueryMeasurementsByLocation(ctx contractapi.TransactionContextInterface, location string) ([]*Measurement, error) {
+	queryString := fmt.Sprintf(`{"selector":{"docType":"measurement","location":"%s"}}`, owner)
+	return getQueryResultForQueryString(ctx, queryString)
+}
+
+
+// QueryMeasurements uses a query string to perform a query for measurements.
+// Query string matching state database syntax is passed in and executed as is.
+// Supports ad hoc queries that can be defined at runtime by the client.
+func (t *DEMstore) QueryMeasurements(ctx contractapi.TransactionContextInterface, queryString string) ([]*Measurement, error) {
+	return getQueryResultForQueryString(ctx, queryString)
+}
+
+
+// getQueryResultForQueryString executes the passed in query string.
+// The result set is built and returned as a byte array containing the JSON results.
+func getQueryResultForQueryString(ctx contractapi.TransactionContextInterface, queryString string) ([]*Measurement, error) {
+	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+
+	return constructQueryResponseFromIterator(resultsIterator)
+}
+
+
 // GetHashID returns the hash of city and cdn to be used as a key
 func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, location string, cdn string) string {
 
@@ -193,6 +225,7 @@ func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, locati
 
 	return hex.EncodeToString(rhash)
 }
+
 
 func main() {
 	cc, err := contractapi.NewChaincode(new(DEMstore))
