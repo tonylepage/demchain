@@ -33,7 +33,7 @@ type DEMstore struct {
 
 // Asset describes basic details of what makes up a simple asset
 type Measurement struct {
-	ID				string 	`json:"ID,string"`
+	ID				string 	`json:"ID"`
 	Location		string 	`json:"location"`
 	Measuredepoch	int 	`json:"measuredepoch"`
 	Rtt				int 	`json:"rtt"`
@@ -167,6 +167,7 @@ func (s *DEMstore) UpdateMeasurement(ctx contractapi.TransactionContextInterface
 		CDN: cdn,
 		Provider: provider,
 	}
+	fmt.Printf(measurement)
 	measurementJSON, err := json.Marshal(measurement)
 	if err != nil {
 	  return err
