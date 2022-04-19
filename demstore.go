@@ -183,12 +183,8 @@ func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface
 	return measurementJSON != nil, nil
 }
 
-// QueryAssetsByOwner queries for assets based on the owners name.
-// This is an example of a parameterized query where the query logic is baked into the chaincode,
-// and accepting a single query parameter (owner).
-// Only available on state databases that support rich query (e.g. CouchDB)
-// Example: Parameterized rich query
-func (t *SimpleChaincode) QueryMeasurementsByLocation(ctx contractapi.TransactionContextInterface, location string) ([]*Measurement, error) {
+// QueryMeasurementsByLocation queries for measurement based on the location.
+func (t *DEMstore) QueryMeasurementsByLocation(ctx contractapi.TransactionContextInterface, location string) ([]*Measurement, error) {
 	queryString := fmt.Sprintf(`{"selector":{"docType":"measurement","location":"%s"}}`, owner)
 	return getQueryResultForQueryString(ctx, queryString)
 }
