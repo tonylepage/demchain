@@ -205,7 +205,7 @@ func (s *DEMstore) DeleteMeasurement(ctx contractapi.TransactionContextInterface
 		return err
 	}
 
-	return ctx.GetStub().DelState(measurementID)
+	return ctx.GetStub().DelState(measurement.ID)
 }
 
 
