@@ -264,6 +264,55 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 }
 
 
+// GetAssetHistory returns the chain of custody for an asset since issuance.
+func (t *DEMstore) GetAssetHistory(ctx contractapi.TransactionContextInterface, location string, cdn string) ([]HistoryQueryResult, error) {
+	measurementID := s.GetHashID(ctx, location, cdn)
+	log.Printf("GetMeasurementHistory - location: %s, cdn: %s, id: %s", location, cdn, measurementID)
+
+	resultsIterator, err := ctx.GetStub().GetHistoryForKey(measurementID)
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+
+	var records []HistoryQueryResult
+	for resultsIterator.HasNext() {
+		response, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+
+		var measurement Measurement
+		if len(response.Value) > 0 {
+			err = json.Unmarshal(response.Value, &measurement)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			measurement = Measurement{
+				ID: measurementID,
+			}
+		}
+
+		timestamp, err := ptypes.Timestamp(response.Timestamp)
+		if err != nil {
+			return nil, err
+		}
+
+		record := HistoryQueryResult{
+			TxId:      response.TxId,
+			Timestamp: timestamp,
+			Record:    &measurement,
+			IsDelete:  response.IsDelete,
+		}
+		records = append(records, record)
+	}
+	
+
+	return records, nil
+}
+
+
 // GetHashID returns the hash of city and cdn to be used as a key
 func (s *DEMstore) GetHashID(ctx contractapi.TransactionContextInterface, location string, cdn string) string {
 
