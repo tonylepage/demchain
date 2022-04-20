@@ -41,6 +41,24 @@ type Measurement struct {
 	Provider		string 	`json:"provider"`
 }
 
+
+// HistoryQueryResult structure used for returning result of history query
+type HistoryQueryResult struct {
+	Record    *Measurement  `json:"record"`
+	TxId      string    	`json:"txId"`
+	Timestamp time.Time 	`json:"timestamp"`
+	IsDelete  bool      	`json:"isDelete"`
+}
+
+
+// PaginatedQueryResult structure used for returning paginated query results and metadata
+type PaginatedQueryResult struct {
+	Records             []*Measurement 	`json:"records"`
+	FetchedRecordsCount int32    		`json:"fetchedRecordsCount"`
+	Bookmark            string   		`json:"bookmark"`
+}
+
+
 // InitLedger add a base set of performance data 
 func (s *DEMstore) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	measurements := []Measurement{
@@ -175,6 +193,18 @@ func (s *DEMstore) UpdateMeasurement(ctx contractapi.TransactionContextInterface
 
 	return ctx.GetStub().PutState(measurementID, measurementJSON)
 }
+
+// DeleteAsset removes an asset key-value pair from the ledger
+func (t *DEMstore) DeleteMeasurement(ctx contractapi.TransactionContextInterface, location string, cdn string) error {
+	measurementID := s.GetHashID(ctx, location, cdn)
+	measurement, err := t.ReadMeasurement(ctx, measurementID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.GetStub().DelState(measurementID)
+}
+
 
 // AssetExists returns true when asset with given ID exists in world state
 func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
