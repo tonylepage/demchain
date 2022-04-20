@@ -21,7 +21,10 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"log"
+	"time"
 
+	"github.com/golang/protobuf/ptypes"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -195,9 +198,9 @@ func (s *DEMstore) UpdateMeasurement(ctx contractapi.TransactionContextInterface
 }
 
 // DeleteAsset removes an asset key-value pair from the ledger
-func (t *DEMstore) DeleteMeasurement(ctx contractapi.TransactionContextInterface, location string, cdn string) error {
+func (s *DEMstore) DeleteMeasurement(ctx contractapi.TransactionContextInterface, location string, cdn string) error {
 	measurementID := s.GetHashID(ctx, location, cdn)
-	measurement, err := t.ReadMeasurement(ctx, measurementID)
+	measurement, err := s.ReadMeasurement(ctx, measurementID)
 	if err != nil {
 		return err
 	}
@@ -217,7 +220,7 @@ func (s *DEMstore) MeasurementExists(ctx contractapi.TransactionContextInterface
 }
 
 // QueryMeasurementsByLocation queries for measurement based on the location.
-func (t *DEMstore) QueryMeasurementsByLocation(ctx contractapi.TransactionContextInterface, location string) ([]*Measurement, error) {
+func (s *DEMstore) QueryMeasurementsByLocation(ctx contractapi.TransactionContextInterface, location string) ([]*Measurement, error) {
 	queryString := fmt.Sprintf(`{"selector":{"docType":"measurement","location":"%s"}}`, location)
 	return getQueryResultForQueryString(ctx, queryString)
 }
@@ -226,7 +229,7 @@ func (t *DEMstore) QueryMeasurementsByLocation(ctx contractapi.TransactionContex
 // QueryMeasurements uses a query string to perform a query for measurements.
 // Query string matching state database syntax is passed in and executed as is.
 // Supports ad hoc queries that can be defined at runtime by the client.
-func (t *DEMstore) QueryMeasurements(ctx contractapi.TransactionContextInterface, queryString string) ([]*Measurement, error) {
+func (s *DEMstore) QueryMeasurements(ctx contractapi.TransactionContextInterface, queryString string) ([]*Measurement, error) {
 	return getQueryResultForQueryString(ctx, queryString)
 }
 
@@ -265,7 +268,7 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 
 
 // GetAssetHistory returns the chain of custody for an asset since issuance.
-func (t *DEMstore) GetAssetHistory(ctx contractapi.TransactionContextInterface, location string, cdn string) ([]HistoryQueryResult, error) {
+func (s *DEMstore) GetAssetHistory(ctx contractapi.TransactionContextInterface, location string, cdn string) ([]HistoryQueryResult, error) {
 	measurementID := s.GetHashID(ctx, location, cdn)
 	log.Printf("GetMeasurementHistory - location: %s, cdn: %s, id: %s", location, cdn, measurementID)
 
@@ -307,7 +310,7 @@ func (t *DEMstore) GetAssetHistory(ctx contractapi.TransactionContextInterface, 
 		}
 		records = append(records, record)
 	}
-	
+
 
 	return records, nil
 }
