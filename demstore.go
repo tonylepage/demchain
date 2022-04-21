@@ -34,7 +34,7 @@ type DEMstore struct {
 	contractapi.Contract
 }
 
-// Asset describes basic details of what makes up a simple asset
+// Asset describes basic details of what makes up a measurement
 type Measurement struct {
 	ID				string 	`json:"ID"`
 	Location		string 	`json:"location"`
@@ -204,6 +204,7 @@ func (s *DEMstore) DeleteMeasurement(ctx contractapi.TransactionContextInterface
 	if err != nil {
 		return err
 	}
+	fmt.Println("Measurement deleted for %s at %s ", cdn, location)
 
 	return ctx.GetStub().DelState(measurement.ID)
 }
@@ -239,6 +240,7 @@ func (s *DEMstore) QueryMeasurements(ctx contractapi.TransactionContextInterface
 func getQueryResultForQueryString(ctx contractapi.TransactionContextInterface, queryString string) ([]*Measurement, error) {
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
+
 		return nil, err
 	}
 	defer resultsIterator.Close()
